@@ -181,7 +181,7 @@ class MemoryPinning(object):
 
 
 def collate_batch(batch, use_shared_memory=False, return_full_imgs=False,
-                  pin_memory=True):
+                  pin_memory=False):
     if return_full_imgs:
         images, cropped_images, targets, _ = zip(*batch)
     else:
@@ -260,7 +260,7 @@ def make_data_loader(dataset, batch_size=32, num_workers=0,
             sampler=sampler,
             collate_fn=collate_fn,
             drop_last=True and is_train,
-            pin_memory=True,
+            pin_memory=False,
         )
     else:
         data_loader = torch.utils.data.DataLoader(
@@ -268,7 +268,7 @@ def make_data_loader(dataset, batch_size=32, num_workers=0,
             num_workers=num_workers,
             collate_fn=collate_fn,
             batch_sampler=batch_sampler,
-            pin_memory=True,
+            pin_memory=False,
         )
     return data_loader
 

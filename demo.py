@@ -20,9 +20,9 @@ import os
 import os.path as osp
 from typing import List, Optional
 import functools
-os.environ['PYOPENGL_PLATFORM'] = 'egl'
+#os.environ['PYOPENGL_PLATFORM'] = 'egl'
 
-import resource
+#import resource
 import numpy as np
 from collections import OrderedDict, defaultdict
 from loguru import logger
@@ -53,8 +53,8 @@ from expose.config import cfg
 from expose.config.cmd_parser import set_face_contour
 from expose.utils.plot_utils import HDRenderer
 
-rlimit = resource.getrlimit(resource.RLIMIT_NOFILE)
-resource.setrlimit(resource.RLIMIT_NOFILE, (rlimit[1], rlimit[1]))
+#rlimit = resource.getrlimit(resource.RLIMIT_NOFILE)
+#resource.setrlimit(resource.RLIMIT_NOFILE, (rlimit[1], rlimit[1]))
 
 
 Vec3d = o3d.utility.Vector3dVector
@@ -152,7 +152,7 @@ def preprocess_images(
         num_workers=num_workers,
         collate_fn=expose_collate,
         drop_last=False,
-        pin_memory=True,
+        pin_memory=False,
     )
     return expose_dloader
 
@@ -227,7 +227,8 @@ def main(
     device = torch.device('cuda')
     if not torch.cuda.is_available():
         logger.error('CUDA is not available!')
-        sys.exit(3)
+        #sys.exit(3)
+        device = "cpu"
 
     logger.remove()
     logger.add(lambda x: tqdm.write(x, end=''),
@@ -273,7 +274,6 @@ def main(
     total_time = 0
     cnt = 0
     for bidx, batch in enumerate(tqdm(expose_dloader, dynamic_ncols=True)):
-
         full_imgs_list, body_imgs, body_targets = batch
         if full_imgs_list is None:
             continue
@@ -283,11 +283,11 @@ def main(
         body_targets = [target.to(device) for target in body_targets]
         full_imgs = full_imgs.to(device=device)
 
-        torch.cuda.synchronize()
+        #torch.cuda.synchronize()
         start = time.perf_counter()
         model_output = model(body_imgs, body_targets, full_imgs=full_imgs,
                              device=device)
-        torch.cuda.synchronize()
+        #torch.cuda.synchronize()
         elapsed = time.perf_counter() - start
         cnt += 1
         total_time += elapsed

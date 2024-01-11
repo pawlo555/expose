@@ -29,13 +29,13 @@ class Timer(object):
         self.sync = sync
 
     def __enter__(self):
-        if self.sync:
-            torch.cuda.synchronize()
+        #if self.sync:
+        #    #torch.cuda.synchronize()
         self.start = time.perf_counter()
 
     def __exit__(self, type, value, traceback):
-        if self.sync:
-            torch.cuda.synchronize()
+        #if self.sync:
+        #    torch.cuda.synchronize()
         elapsed = time.perf_counter() - self.start
         self.elapsed.append(elapsed)
         logger.info(

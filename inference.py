@@ -178,11 +178,11 @@ def main(
         body_targets = [target.to(device) for target in body_targets]
         full_imgs = full_imgs.to(device=device)
 
-        torch.cuda.synchronize()
+        #torch.cuda.synchronize()
         start = time.perf_counter()
         model_output = model(body_imgs, body_targets, full_imgs=full_imgs,
                              device=device)
-        torch.cuda.synchronize()
+        #torch.cuda.synchronize()
         elapsed = time.perf_counter() - start
         cnt += 1
         total_time += elapsed
