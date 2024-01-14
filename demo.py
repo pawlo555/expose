@@ -448,7 +448,7 @@ def main(
 
             if show:
                 nrows = 1
-                ncols = 4 + len(degrees)
+                ncols = 3 + len(degrees)
                 fig, axes = plt.subplots(
                     ncols=ncols, nrows=nrows, num=0,
                     gridspec_kw={'wspace': 0, 'hspace': 0})
@@ -458,10 +458,10 @@ def main(
                     ax.set_axis_off()
 
                 axes[0, 0].imshow(hd_imgs[idx])
-                axes[0, 1].imshow(out_img['rgb'][idx])
-                axes[0, 2].imshow(out_img['hd_orig_overlay'][idx])
-                axes[0, 3].imshow(out_img['hd_overlay'][idx])
-                start = 4
+                # axes[0, 1].imshow(out_img['hd_imgs'][idx])
+                axes[0, 1].imshow(out_img['hd_orig_overlay'][idx])
+                axes[0, 2].imshow(out_img['hd_overlay'][idx])
+                start = 3
                 for deg in degrees:
                     axes[0, start].imshow(
                         out_img[f'hd_rendering_{deg:03.0f}'][idx])
@@ -472,6 +472,10 @@ def main(
                     plt.pause(pause)
                 else:
                     plt.show()
+                naive_mesh.compute_vertex_normals()
+                R = naive_mesh.get_rotation_matrix_from_xyz((np.pi , 0, 0))
+                naive_mesh.rotate(R, center=(0, 0, 0))
+                o3d.visualization.draw_geometries([naive_mesh])
 
     logger.info(f'Average inference time: {total_time / cnt}')
 
