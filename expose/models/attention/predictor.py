@@ -1014,9 +1014,9 @@ class SMPLXHead(nn.Module):
 
         # Split the vertices, joints, etc. to stages
         out_params = defaultdict(lambda: dict())
-        for key in body_model_output._fields:
-            if torch.is_tensor(getattr(body_model_output, key)):
-                curr_val = getattr(body_model_output, key)
+        for key in body_model_output:
+            if torch.is_tensor(body_model_output[key]):
+                curr_val = body_model_output[key]
                 out_list = torch.split(
                     curr_val, batch_size, dim=0)
                 # If the number of outputs is equal to the number of stages
@@ -1467,13 +1467,13 @@ class SMPLXHead(nn.Module):
             final_body_model_output = self.body_model(
                 get_skin=True, return_shaped=True, **final_body_parameters)
             param_dicts.append({
-                **final_body_parameters, **final_body_model_output._asdict()})
+                **final_body_parameters, **final_body_model_output})
 
         if (self.apply_hand_network_on_body or
                 self.apply_head_network_on_body):
             out_params['final'] = {
-                **final_body_parameters, **final_body_model_output._asdict()}
-            joints3d = getattr(final_body_model_output, 'joints')
+                **final_body_parameters, **final_body_model_output}
+            joints3d = final_body_model_output.get('joints')
             proj_joints = self.projection(
                 joints3d, scale=scale, translation=translation)
             out_params['final_proj_joints'] = proj_joints
